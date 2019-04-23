@@ -3,7 +3,7 @@ package cn.sanenen.service;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * 计数静态类 1
+ * 计数静态类 2
  * @author sun
  * 2019年4月23日 下午2:24:42
  */
