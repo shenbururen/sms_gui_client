@@ -11,7 +11,7 @@ import cn.hutool.core.thread.ThreadUtil;
 import io.netty.channel.ChannelFuture;
 
 /**
- * 发送服务类
+ * 发送服务类 1
  * @author sun
  * 2019年4月23日 下午2:25:34
  */
