@@ -2,6 +2,11 @@ package cn.sanenen.service;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * 计数静态类
+ * @author sun
+ * 2019年4月23日 下午2:24:42
+ */
 public class AtomicUtil {
 
 	public static AtomicLong sendCount = new AtomicLong();
