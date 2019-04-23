@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 计数静态类 3
- * @author sun 
+ * @author sun
  * 2019年4月23日 下午2:24:42
  */
 public class AtomicUtil {
