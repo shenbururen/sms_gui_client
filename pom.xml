@@ -12,6 +12,7 @@
 			<artifactId>sms-core</artifactId>
 			<version>2.1.7</version>
 		</dependency>
+		<!-- 强大的工具包,比lang3强大 -->
 		<dependency>
 			<groupId>cn.hutool</groupId>
 			<artifactId>hutool-all</artifactId>
