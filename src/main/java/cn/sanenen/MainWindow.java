@@ -1,37 +1,5 @@
 package cn.sanenen;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.SystemColor;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import com.zx.sms.connect.manager.EndpointEntity.SupportLongMessage;
-import com.zx.sms.connect.manager.EndpointManager;
-import com.zx.sms.connect.manager.cmpp.CMPPClientEndpointEntity;
-import com.zx.sms.handler.api.BusinessHandlerInterface;
-
 import cn.hutool.core.convert.NumberChineseFormater;
 import cn.hutool.core.io.resource.ClassPathResource;
 import cn.hutool.core.thread.ThreadUtil;
@@ -42,7 +10,16 @@ import cn.sanenen.handler.MessageReceiveHandler;
 import cn.sanenen.service.AtomicUtil;
 import cn.sanenen.service.ConvertService;
 import cn.sanenen.service.SignUtil;
-import javax.swing.JTabbedPane;
+import com.zx.sms.connect.manager.EndpointEntity.SupportLongMessage;
+import com.zx.sms.connect.manager.EndpointManager;
+import com.zx.sms.connect.manager.cmpp.CMPPClientEndpointEntity;
+import com.zx.sms.handler.api.BusinessHandlerInterface;
+
+import javax.swing.*;
+import java.awt.*;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainWindow {
 
@@ -88,37 +65,32 @@ public class MainWindow {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
+		EventQueue.invokeLater(()-> {
 				try {
 					MainWindow frame = new MainWindow();
 					frame.init();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}
 		});
 	}
 
 	public void init() {
 		CronUtil.setMatchSecond(true);
-		CronUtil.schedule("0/1 * * * * ? ", new Runnable() {
-			@Override
-			public void run() {
-				long nowcnt = AtomicUtil.sendCount.get();
-				MainWindow.lbls_1.setText(StrUtil.format("发送速度:{}/s", (nowcnt - sendLastNum) / 1));
-				sendLastNum = nowcnt;
-				long nowcnt2 = AtomicUtil.reponseCount.get();
-				MainWindow.lbls.setText(StrUtil.format("响应速度:{}/s", (nowcnt2 - responseLastNum) / 1));
-				responseLastNum = nowcnt2;
-			}
+		CronUtil.schedule("0/1 * * * * ? ", (Runnable) () -> {
+			long nowcnt = AtomicUtil.sendCount.get();
+			MainWindow.lbls_1.setText(StrUtil.format("发送速度:{}/s", (nowcnt - sendLastNum) / 1));
+			sendLastNum = nowcnt;
+			long nowcnt2 = AtomicUtil.reponseCount.get();
+			MainWindow.lbls.setText(StrUtil.format("响应速度:{}/s", (nowcnt2 - responseLastNum) / 1));
+			responseLastNum = nowcnt2;
 		});
 		CronUtil.start();
 		
-		frame = new JFrame("123456");
+		frame = new JFrame("cmpp20客户端");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setFont(new Font("Consolas", Font.PLAIN, 12));
-		frame.setIconImage(new ImageIcon(new ClassPathResource("favicon.png").getUrl()).getImage());
+		frame.setIconImage(new ImageIcon(new ClassPathResource("e.png").getUrl()).getImage());
 		// frame.getContentPane().setLayout(null);
 		panel = new JPanel();// 基础信息
 		panel.setLayout(null);
@@ -129,7 +101,7 @@ public class MainWindow {
 		JPanel panel2 = new JPanel();
 		panel2.setLayout(null);
 		tabbedPane.addTab("CMPP20", panel);
-		tabbedPane.addTab("HTTP", panel2);
+//		tabbedPane.addTab("HTTP", panel2);
 //		contentPane.add(panel, BorderLayout.CENTER);
 		// 连接信息等输入框
 		initText();
@@ -196,16 +168,14 @@ public class MainWindow {
 		panel.add(label_msgShow);
 
 		textArea_content = new JTextArea();
-		textArea_content.addCaretListener(new CaretListener() {
-			public void caretUpdate(CaretEvent e) {
-				String txt = textArea_content.getText();
-				int leng = txt.length();
-				if (checkBox_randomContent.isSelected()) {
-					leng += 8;
-					txt += "00000000";
-				}
-				label_msgShow.setText(StrUtil.format("当前字数:{},短信条数:{}", leng,SignUtil.spliteMsg(txt)));
+		textArea_content.addCaretListener(e -> {
+			String txt = textArea_content.getText();
+			int leng = txt.length();
+			if (checkBox_randomContent.isSelected()) {
+				leng += 8;
+				txt += "00000000";
 			}
+			label_msgShow.setText(StrUtil.format("当前字数:{},短信条数:{}", leng,SignUtil.spliteMsg(txt)));
 		});
 		scrollPane.setViewportView(textArea_content);
 		textArea_content.setText("【易信科技】我是短信内容");
@@ -226,13 +196,11 @@ public class MainWindow {
 
 
 		checkBox_manySend = new JCheckBox("循环发送");
-		checkBox_manySend.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				if (checkBox_manySend.isSelected()) {
-					textField_manySendCount.setEditable(true);
-				}else {
-					textField_manySendCount.setEditable(false);
-				}
+		checkBox_manySend.addChangeListener(e -> {
+			if (checkBox_manySend.isSelected()) {
+				textField_manySendCount.setEditable(true);
+			}else {
+				textField_manySendCount.setEditable(false);
 			}
 		});
 		checkBox_manySend.setBounds(209, 285, 78, 23);
@@ -240,14 +208,12 @@ public class MainWindow {
 
 		textField_manySendCount = new JTextField();
 		textField_manySendCount.setText("100");
-		textField_manySendCount.addCaretListener(new CaretListener() {
-			public void caretUpdate(CaretEvent e) {
-				String text = textField_manySendCount.getText();
-				if (StrUtil.isNotBlank(text)) {
-					label_daxie.setText(NumberChineseFormater.format(Double.parseDouble(text), false));
-				}else {
-					label_daxie.setText("");
-				}
+		textField_manySendCount.addCaretListener(e -> {
+			String text = textField_manySendCount.getText();
+			if (StrUtil.isNotBlank(text)) {
+				label_daxie.setText(NumberChineseFormater.format(Double.parseDouble(text), false));
+			}else {
+				label_daxie.setText("");
 			}
 		});
 		textField_manySendCount.setEditable(false);
@@ -256,17 +222,15 @@ public class MainWindow {
 		textField_manySendCount.setColumns(10);
 		
 		JButton button_clear = new JButton("清零");
-		button_clear.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				sendLastNum = 0;
-				responseLastNum = 0;
-				lebel_sendCount.setText("发送数量:0"); 
-				label_reponseCount.setText("响应数量:0");
-				label_sucCount.setText("提交成功:0");
-				label_failCount.setText("提交失败:0");
-				label_reportCount.setText("报告数量:0");
-				AtomicUtil.clear();
-			}
+		button_clear.addActionListener(e -> {
+			sendLastNum = 0;
+			responseLastNum = 0;
+			lebel_sendCount.setText("发送数量:0"); 
+			label_reponseCount.setText("响应数量:0");
+			label_sucCount.setText("提交成功:0");
+			label_failCount.setText("提交失败:0");
+			label_reportCount.setText("报告数量:0");
+			AtomicUtil.clear();
 		});
 		button_clear.setForeground(Color.BLACK);
 		button_clear.setBackground(SystemColor.controlHighlight);
@@ -367,12 +331,10 @@ public class MainWindow {
 
 	public void initButton() {
 		button_connect = new JButton("连接");
-		button_connect.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				connect();
-				// 禁用 用户名等输入框
-				downInput();
-			}
+		button_connect.addActionListener(e -> {
+			connect();
+			// 禁用 用户名等输入框
+			downInput();
 		});
 		button_connect.setForeground(SystemColor.windowText);
 		button_connect.setBounds(209, 15, 72, 31);
@@ -380,18 +342,16 @@ public class MainWindow {
 		panel.add(button_connect);
 
 		button_unconnect = new JButton("断开");
-		button_unconnect.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// 连接断开
-				manager.close();
-				upInput();
-				isCanSend = false;
-				sendLastNum = 0;
-				responseLastNum = 0;
-				AtomicUtil.clear();
-				MainWindow.button_connect.setEnabled(true);
-				MainWindow.button_send.setEnabled(false);
-			}
+		button_unconnect.addActionListener(e -> {
+			// 连接断开
+			manager.close();
+			upInput();
+			isCanSend = false;
+			sendLastNum = 0;
+			responseLastNum = 0;
+			AtomicUtil.clear();
+			MainWindow.button_connect.setEnabled(true);
+			MainWindow.button_send.setEnabled(false);
 		});
 		button_unconnect.setForeground(SystemColor.windowText);
 		button_unconnect.setBackground(SystemColor.controlHighlight);
@@ -399,13 +359,11 @@ public class MainWindow {
 		panel.add(button_unconnect);
 
 		button_send = new JButton("发送");
-		button_send.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					send();
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
+		button_send.addActionListener(e -> {
+			try {
+				send();
+			} catch (Exception e1) {
+				e1.printStackTrace();
 			}
 		});
 		button_send.setEnabled(false);
@@ -477,39 +435,36 @@ public class MainWindow {
 		boolean randomMobile = checkBox_randomMobile.isSelected();
 		boolean manySend = checkBox_manySend.isSelected();
 		if (manySend) {
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						button_send.setEnabled(false);
-						int manyCount = Integer.parseInt(textField_manySendCount.getText());
-						String tempContent = contStr;
-						for (int i = 0; i < manyCount; i++) {
-							if (isCanSend == false) {
-								break;
-							}
-							if (randomContent) {// 加验证码
-								tempContent = contStr + RandomUtil.randomString(8);
-							}
-							if (randomMobile) {// 随机手机号
-								ConvertService.sendSms(ConvertService.getMobile(), tempContent, id);
-								AtomicUtil.sendCount.incrementAndGet();
-							} else {
-								String[] destMobile = mobile.split(",|，");
-								for (String tmpmobile : destMobile) {
-									if (StrUtil.isNotBlank(tmpmobile)) {
-										ConvertService.sendSms(tmpmobile, contStr, id);
-										AtomicUtil.sendCount.incrementAndGet();
-									}
+			new Thread(() -> {
+				try {
+					button_send.setEnabled(false);
+					int manyCount = Integer.parseInt(textField_manySendCount.getText());
+					String tempContent = contStr;
+					for (int i = 0; i < manyCount; i++) {
+						if (isCanSend == false) {
+							break;
+						}
+						if (randomContent) {// 加验证码
+							tempContent = contStr + RandomUtil.randomString(8);
+						}
+						if (randomMobile) {// 随机手机号
+							ConvertService.sendSms(ConvertService.getMobile(), tempContent, id);
+							AtomicUtil.sendCount.incrementAndGet();
+						} else {
+							String[] destMobile = mobile.split(",|，");
+							for (String tmpmobile : destMobile) {
+								if (StrUtil.isNotBlank(tmpmobile)) {
+									ConvertService.sendSms(tmpmobile, contStr, id);
+									AtomicUtil.sendCount.incrementAndGet();
 								}
 							}
-							MainWindow.lebel_sendCount.setText(StrUtil.format("发送数量:{}",AtomicUtil.sendCount.get()));
 						}
-					} catch (Exception e) {
-						e.printStackTrace();
+						MainWindow.lebel_sendCount.setText(StrUtil.format("发送数量:{}",AtomicUtil.sendCount.get()));
 					}
-					button_send.setEnabled(true);
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
+				button_send.setEnabled(true);
 			}).start();
 		} else {
 			String[] destMobile = mobile.split(",|，");
