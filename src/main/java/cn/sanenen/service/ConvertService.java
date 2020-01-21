@@ -1,14 +1,12 @@
 package cn.sanenen.service;
 
-import java.util.Random;
-
+import cn.hutool.core.thread.ThreadUtil;
 import com.zx.sms.codec.cmpp.msg.CmppSubmitRequestMessage;
-import com.zx.sms.common.util.MsgId;
 import com.zx.sms.connect.manager.EndpointConnector;
 import com.zx.sms.connect.manager.EndpointManager;
-
-import cn.hutool.core.thread.ThreadUtil;
 import io.netty.channel.ChannelFuture;
+
+import java.util.Random;
 
 /**
  * 发送服务类 2
@@ -21,13 +19,8 @@ public class ConvertService {
 		
 		CmppSubmitRequestMessage msg = new CmppSubmitRequestMessage();
 		msg.setDestterminalId(mobile);
-		msg.setLinkID("0000");
 		msg.setMsgContent(content);
 		msg.setRegisteredDelivery((short) 1);
-		msg.setMsgid(new MsgId());
-		msg.setServiceId("10086");
-		msg.setSrcId("10086");
-		msg.setMsgsrc("927165");
 		EndpointConnector<?> connector = EndpointManager.INS.getEndpointConnector(id);
 		while (true) {
 			ChannelFuture write = connector.asynwrite(msg);
