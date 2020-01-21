@@ -12,6 +12,7 @@ import cn.sanenen.MainWindow;
 import cn.sanenen.service.AtomicUtil;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
 
 @Sharable
 public class MessageReceiveHandler extends AbstractBusinessHandler {
@@ -21,6 +22,7 @@ public class MessageReceiveHandler extends AbstractBusinessHandler {
 		return "MessageReceiveHandler-smsBiz";
 	}
 
+	@Override
 	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
 		if (evt == SessionState.Connect) {
 			MainWindow.button_send.setEnabled(true);
@@ -28,7 +30,18 @@ public class MessageReceiveHandler extends AbstractBusinessHandler {
 		}
 		ctx.fireUserEventTriggered(evt);
 	}
-	
+
+	@Override
+	public void disconnect(ChannelHandlerContext ctx, ChannelPromise promise) throws Exception {
+		MainWindow.button_send.setEnabled(false);
+		MainWindow.button_connect.setEnabled(true);
+	}
+
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+		MainWindow.button_send.setEnabled(false);
+		MainWindow.button_connect.setEnabled(true);
+	}
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -64,6 +77,7 @@ public class MessageReceiveHandler extends AbstractBusinessHandler {
 		}
 	}
 
+	@Override
 	public MessageReceiveHandler clone() throws CloneNotSupportedException {
 		MessageReceiveHandler ret = (MessageReceiveHandler) super.clone();
 		return ret;
