@@ -178,7 +178,7 @@ public class MainWindow {
 			label_msgShow.setText(StrUtil.format("当前字数:{},短信条数:{}", leng,SignUtil.spliteMsg(txt)));
 		});
 		scrollPane.setViewportView(textArea_content);
-		textArea_content.setText("【易信科技】我是短信内容");
+		textArea_content.setText("【签名】我是短信内容");
 		textArea_content.setTabSize(0);
 		textArea_content.setWrapStyleWord(true);
 		textArea_content.setLineWrap(true);
@@ -248,7 +248,7 @@ public class MainWindow {
 		panel.add(lblNewLabel);
 
 		textField_IP = new JTextField();
-		textField_IP.setText("192.168.2.58");
+		textField_IP.setText("127.0.0.1");
 		textField_IP.setBounds(84, 21, 109, 21);
 		textField_IP.setColumns(10);
 		panel.add(textField_IP);
@@ -259,7 +259,7 @@ public class MainWindow {
 		panel.add(label);
 
 		textField_PORT = new JTextField();
-		textField_PORT.setText("9004");
+		textField_PORT.setText("7890");
 		textField_PORT.setColumns(10);
 		textField_PORT.setBounds(84, 63, 109, 21);
 		panel.add(textField_PORT);
@@ -323,7 +323,7 @@ public class MainWindow {
 		panel.add(label_7);
 
 		textField_speed = new JTextField();
-		textField_speed.setText("100");
+		textField_speed.setText("1000");
 		textField_speed.setColumns(10);
 		textField_speed.setBounds(84, 318, 109, 21);
 		panel.add(textField_speed);
@@ -405,10 +405,10 @@ public class MainWindow {
 		client.setUserName(txtDse.getText());
 		client.setPassword(textField_pwd.getText());
 		client.setServiceId(textField_serviceid.getText());
+		client.setSpCode(textField_spnum.getText());
 		client.setMaxChannels(Short.parseShort(textField_conCount.getText()));
 		client.setVersion((short) 0x20);
 		client.setWriteLimit(Integer.parseInt(textField_speed.getText()));
-
 		client.setGroupName("test");
 		client.setChartset(Charset.forName("utf-8"));
 		client.setRetryWaitTimeSec((short) 30);
@@ -423,8 +423,9 @@ public class MainWindow {
 
 		manager.addEndpointEntity(client);
 		ThreadUtil.sleep(1000);
-		for (int i = 0; i < client.getMaxChannels(); i++)
+		for (int i = 0; i < client.getMaxChannels(); i++) {
 			manager.openEndpoint(client);
+		}
 	}
 
 	private void send() {
