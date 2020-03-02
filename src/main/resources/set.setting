@@ -1,0 +1,17 @@
+ip = 127.0.0.1
+port = 9002
+username = liyf01
+password = liyf01
+serviceid = 
+spcode = 1069011273076
+maxConnect = 20
+speed = 100
+
+content = 【云漫】测试内容
+# 1 随机手机号 0 不随机
+randomMobile = 1
+mobile = 13000000000
+sendCount = 100000
+
+# 1 退出程序
+close = 0
