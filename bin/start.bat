@@ -1,0 +1,1 @@
+java -jar lib/javafx_cmpp_client-1.0.jar

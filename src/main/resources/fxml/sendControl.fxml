@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="340.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.sanenen.fx.controller.SendController">
+   <children>
+      <TextArea fx:id="content" focusTraversable="false" layoutX="21.0" prefHeight="112.0" prefWidth="300.0" wrapText="true">
+         <font>
+            <Font size="14.0" />
+         </font></TextArea>
+      <Label fx:id="contentCount" layoutX="35.0" layoutY="113.0" prefHeight="27.0" prefWidth="226.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <TextArea fx:id="mobile" focusTraversable="false" layoutX="21.0" layoutY="144.0" prefHeight="53.0" prefWidth="300.0" text="13700010002" wrapText="true">
+         <font>
+            <Font size="14.0" />
+         </font></TextArea>
+      <CheckBox fx:id="randomContent" layoutX="27.0" layoutY="209.0" mnemonicParsing="false" text="内容结尾添加随机变量" />
+      <CheckBox fx:id="randomMobile" layoutX="27.0" layoutY="234.0" mnemonicParsing="false" text="随机手机号" />
+      <CheckBox fx:id="manySend" layoutX="27.0" layoutY="259.0" mnemonicParsing="false" text="循环发送" />
+      <TextField fx:id="sendCount" disable="true" focusTraversable="false" layoutX="100.0" layoutY="256.0" prefHeight="23.0" prefWidth="85.0" />
+      <Label fx:id="sendCountShow" layoutX="190.0" layoutY="256.0" prefHeight="23.0" prefWidth="147.0" />
+      <Button fx:id="send" disable="true" layoutX="116.0" layoutY="290.0" mnemonicParsing="false" onAction="#send" prefHeight="35.0" prefWidth="81.0" text="发送" />
+   </children>
+</AnchorPane>
