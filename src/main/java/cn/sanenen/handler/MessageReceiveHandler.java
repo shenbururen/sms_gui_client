@@ -2,10 +2,7 @@ package cn.sanenen.handler;
 
 import cn.hutool.log.Log;
 import cn.sanenen.service.AtomicUtil;
-import com.zx.sms.codec.cmpp.msg.CmppDeliverRequestMessage;
-import com.zx.sms.codec.cmpp.msg.CmppDeliverResponseMessage;
-import com.zx.sms.codec.cmpp.msg.CmppSubmitRequestMessage;
-import com.zx.sms.codec.cmpp.msg.CmppSubmitResponseMessage;
+import com.zx.sms.codec.cmpp.msg.*;
 import com.zx.sms.handler.api.AbstractBusinessHandler;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,16 +21,21 @@ public class MessageReceiveHandler extends AbstractBusinessHandler {
         // System.out.println(msg);
         if (msg instanceof CmppDeliverRequestMessage) {
             CmppDeliverRequestMessage e = (CmppDeliverRequestMessage) msg;
+            if (e.isReport()) {
+                AtomicUtil.reportCount.incrementAndGet();
+//                CmppReportRequestMessage report = e.getReportRequestMessage();
+//                CmppSubmitRequestMessage request = CacheMap.map.remove(report.getMsgId().toString());
+//                if (request != null){
+//                    long sendTime = (long) request.getAttachment();
+//                    log.warn("report delay:{}", System.currentTimeMillis() - sendTime);
+//                }
+            } else {
+                log.error(e.toString());
+            }
             CmppDeliverResponseMessage responseMessage = new CmppDeliverResponseMessage(e.getHeader().getSequenceId());
+            responseMessage.setMsgId(e.getMsgId());
             responseMessage.setResult(0);
             ctx.channel().writeAndFlush(responseMessage);
-            log.info("发送：{},响应：{},提交失败：{},提交成功：{},状态：{}"
-                    , AtomicUtil.sendCount.get()
-                    , AtomicUtil.reponseCount.get()
-                    , AtomicUtil.failCount.get()
-                    , AtomicUtil.sucCount.get()
-                    , AtomicUtil.reportCount.incrementAndGet()
-            );
             // cnt.incrementAndGet();
 
         } else if (msg instanceof CmppDeliverResponseMessage) {
@@ -47,21 +49,19 @@ public class MessageReceiveHandler extends AbstractBusinessHandler {
             ctx.channel().writeAndFlush(resp);
         } else if (msg instanceof CmppSubmitResponseMessage) {
             CmppSubmitResponseMessage e = (CmppSubmitResponseMessage) msg;
+            CmppSubmitRequestMessage request = (CmppSubmitRequestMessage) e.getRequest();
+            long sendTime = (long) request.getAttachment();
+            long l = System.currentTimeMillis();
+//            log.warn("submitRequest delay:{}", l - sendTime);
+//            request.setAttachment(l);
+//            CacheMap.map.put(e.getMsgId().toString(), request);
             long result = e.getResult();
-            long suc = 0;
-            long fail = 0;
             if (result == 0) {
-                suc = AtomicUtil.sucCount.incrementAndGet();
+                AtomicUtil.sucCount.incrementAndGet();
             } else {
-                fail = AtomicUtil.failCount.incrementAndGet();
+                AtomicUtil.failCount.incrementAndGet();
             }
-            log.info("发送：{},响应：{},提交失败：{},提交成功：{},状态：{}"
-                    , AtomicUtil.sendCount.get()
-                    , AtomicUtil.reponseCount.incrementAndGet()
-                    , fail
-                    , suc
-                    , AtomicUtil.reportCount.get()
-            );
+            AtomicUtil.reponseCount.incrementAndGet();
         } else {
             ctx.fireChannelRead(msg);
         }

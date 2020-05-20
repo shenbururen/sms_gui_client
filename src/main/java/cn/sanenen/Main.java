@@ -9,6 +9,7 @@ import cn.sanenen.service.AtomicUtil;
 import cn.sanenen.service.ConvertService;
 import cn.sanenen.service.Param;
 import com.zx.sms.connect.manager.EndpointConnector;
+import com.zx.sms.connect.manager.EndpointEntity;
 import com.zx.sms.connect.manager.EndpointEntity.SupportLongMessage;
 import com.zx.sms.connect.manager.EndpointManager;
 import com.zx.sms.connect.manager.cmpp.CMPPClientEndpointEntity;
@@ -53,7 +54,13 @@ public class Main {
             log.info("发送速度:{}/s,响应速度:{}/s", send, reponse);
         });
         CronUtil.schedule("0/5 * * * * ? ", (Runnable) () -> {
-            EndpointConnector<?> connector = manager.getEndpointConnector(Param.getUsername());
+            EndpointEntity endpointEntity = manager.getEndpointEntity(Param.getUsername());
+            if (endpointEntity == null){
+                log.info("开始连接");
+                connect();
+                return;
+            }
+            EndpointConnector<EndpointEntity> connector = manager.getEndpointEntity(Param.getUsername()).getSingletonConnector();
             if (connector == null || connector.fetch() == null) {
                 log.info("无连接");
                 manager.close();
@@ -88,11 +95,12 @@ public class Main {
         client.setWriteLimit(Integer.parseInt(Param.getSpeed()));
         client.setGroupName("test");
         client.setChartset(StandardCharsets.UTF_8);
-        client.setRetryWaitTimeSec((short) 30);
+        client.setRetryWaitTimeSec((short) 60);
         client.setUseSSL(false);
         client.setMaxRetryCnt((short) 0);
         client.setReSendFailMsg(false);
-        client.setSupportLongmsg(SupportLongMessage.BOTH);
+        client.setCloseWhenRetryFailed(false);
+        client.setSupportLongmsg(SupportLongMessage.SEND);
         List<BusinessHandlerInterface> clienthandlers = new ArrayList<>();
         clienthandlers.add(new MessageReceiveHandler());
         // clienthandlers.add( new SessionConnectedHandler());
@@ -101,6 +109,8 @@ public class Main {
         for (int i = 0; i < client.getMaxChannels(); i++) {
             manager.openEndpoint(client);
         }
+        manager.startConnectionCheckTask();
+        
     }
 
     private static void send() {

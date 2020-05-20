@@ -1,11 +1,11 @@
-ip = 127.0.0.1
-port = 9002
-username = liyf01
-password = liyf01
+ip = 192.168.1.91
+port = 7893
+username = xdyxdy
+password = xdyxdy
 serviceid = 
-spcode = 1069011273076
-maxConnect = 20
-speed = 100
+spcode = 
+maxConnect = 10
+speed = 1000
 
 content = 【云漫】测试内容
 # 1 随机手机号 0 不随机
