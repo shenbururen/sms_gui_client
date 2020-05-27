@@ -14,7 +14,7 @@
     <version>2.0</version>
     <properties>
         <package.path>${project.build.directory}/cmppClientTest</package.path>
-        <mainClass>cn.sanenen.cn.sanenen.fx.Main</mainClass>
+        <mainClass>cn.sanenen.fx.Main</mainClass>
         <java.version>1.8</java.version>
     </properties>
     <dependencies>
@@ -92,6 +92,7 @@
                     <!--不打包资源文件 -->
                     <excludes>
                         <exclude>*</exclude>
+                        <exclude>*/*</exclude>
                     </excludes>
                     <outputDirectory>${package.path}/lib</outputDirectory>
                 </configuration>
