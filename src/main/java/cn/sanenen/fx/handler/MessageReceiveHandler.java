@@ -59,6 +59,7 @@ public class MessageReceiveHandler extends AbstractBusinessHandler {
         if (msg instanceof CmppDeliverRequestMessage) {
             CmppDeliverRequestMessage e = (CmppDeliverRequestMessage) msg;
             CmppDeliverResponseMessage responseMessage = new CmppDeliverResponseMessage(e.getHeader().getSequenceId());
+            responseMessage.setMsgId(e.getMsgId());
             responseMessage.setResult(0);
             ctx.channel().writeAndFlush(responseMessage);
             AtomicUtil.reportCount.incrementAndGet();
